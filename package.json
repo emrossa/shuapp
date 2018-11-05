@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/emrossa/shuapp#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "mongoose": "^5.3.9",
     "passport": "^0.4.0"
   }
 }
