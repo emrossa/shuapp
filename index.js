@@ -36,11 +36,36 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/MyDatabase');
 
 const Schema = mongoose.Schema;
-const UserDetail = new Schema({
+const userSchema = new Schema({
       username: String,
       password: String
     });
-const UserDetails = mongoose.model('userInfo', UserDetail, 'userInfo');
+const UserInfo = mongoose.model('userInfo', userSchema, 'userInfo');
+
+const teamSchema = new Schema({
+      membername: String,
+      memberjob: String
+    });
+const TeamInfo = mongoose.model('teamInfo', teamSchema, 'teamInfo');
+
+
+const attractionSchema = new Schema({
+      attractionname: String,
+      attractionprice: String
+    });
+const AttractionInfo = mongoose.model('attractionInfo', attractionSchema, 'attractionInfo');
+
+const locationSchema = new Schema({
+    locationname: String,
+    locationprice: String
+  });
+const LocationInfo = mongoose.model('locationInfo', locationSchema, 'locationInfo');
+
+const timingSchema = new Schema({
+    hours: String,
+    timeprice: String
+  });
+const TimingInfo = mongoose.model('timingInfo', timingSchema, 'timingInfo');
 
 /* PASSPORT LOCAL AUTHENTICATION */
 
@@ -48,7 +73,7 @@ const LocalStrategy = require('passport-local').Strategy;
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-      UserDetails.findOne({
+      UserInfo.findOne({
         username: username
       }, function(err, user) {
         if (err) {
