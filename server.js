@@ -11,11 +11,10 @@ app.set('view engine', 'ejs');
 // index page 
 app.get('/', function(req, res) {
     res.render('pages/index');
-
-    // server.js
+});
 
 // people page 
-app.get('/', function(req, res) {
+app.get('/people', function(req, res) {
     var team = [
         { name: 'Tom Adams', job: 3 },
         { name: 'Chris Smith', job: 5 },
@@ -27,12 +26,6 @@ app.get('/', function(req, res) {
         team: team,
         tagline: tagline
     });
-});
-});
-
-// people page 
-app.get('/people', function(req, res) {
-    res.render('pages/people');
 });
 
 // location page 
