@@ -1,14 +1,4 @@
 <!-- views/pages/people.ejs -->
-...
-<h2>Loop</h2>
-
-<ul>
-    <% team.forEach(function(member) { %>
-        <li><%= member.name %> - <%= member.job %></li>
-    <% }); %>
-</ul>
-...
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +16,12 @@
         <div class="jumbotron">
             <h2>Meet our wonderful team</h2>
             <p>Select the entertainers for your event. You can choose as many as you like.</p>
+
+            <ul>
+                <% people.forEach(function(member) { %>
+                    <li><%= member.membername %> - <%= member.memberjob %></li>
+                <% }); %>
+            </ul> 
         </div>
     </div>
 

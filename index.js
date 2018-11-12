@@ -102,17 +102,14 @@ app.get('/', function(req, res) {
 
 // people page 
 app.get('/people', function(req, res) {
-    var team = [
-        { name: 'Tom Adams', job: 3 },
-        { name: 'Chris Smith', job: 5 },
-        { name: 'Amy White', job: 3}
-    ];
-    var tagline = "Our fabulous team!";
-
-    res.render('pages/people', {
-        team: team,
-        tagline: tagline
+    TeamInfo.find({}, function(err, people) {
+        res.render('pages/people', {
+            people: people
+        });
     });
+
+
+   
 });
 
 // location page 
