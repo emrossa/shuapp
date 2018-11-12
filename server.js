@@ -35,5 +35,19 @@ app.get('/people', function(req, res) {
     res.render('pages/people');
 });
 
+// location page 
+app.get('/locations', function(req, res) {
+    res.render('pages/locations');
+});
+
+// attractions page 
+app.get('/attractions', function(req, res) {
+    res.render('pages/attractions');
+});
+
+// timings page 
+app.get('/timings', function(req, res) {
+    res.render('pages/timings');
+});
 app.listen(8080);
 console.log('8080 is the magic port');
