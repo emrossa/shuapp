@@ -1,7 +1,12 @@
 <!-- views/pages/people.ejs -->
 ...
-<h2>Variable</h2>
-<p><%= tagline %></p>
+<h2>Loop</h2>
+
+<ul>
+    <% team.forEach(function(person) { %>
+        <li><%= team.name %> - <%= team.job %></li>
+    <% }); %>
+</ul>
 ...
 
 <!DOCTYPE html>

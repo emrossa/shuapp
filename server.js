@@ -15,8 +15,8 @@ app.get('/', function(req, res) {
     // server.js
 
 // people page 
-app.get('/people', function(req, res) {
-    var people = [
+app.get('/', function(req, res) {
+    var team = [
         { name: 'Tom Adams', job: 3 },
         { name: 'Chris Smith', job: 5 },
         { name: 'Amy White', job: 3}
@@ -24,7 +24,7 @@ app.get('/people', function(req, res) {
     var tagline = "Our fabulous team!";
 
     res.render('pages/people', {
-        people: people,
+        team: team,
         tagline: tagline
     });
 });
