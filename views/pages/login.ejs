@@ -1,0 +1,35 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h1>Magic Entertainment</h1>
+        <h2>Log In</h2>
+        <form method="post">
+            <label>Username:</label>
+            <input type="text" placeholder="User name" name="username" id="username"/>
+
+            <label>Password:</label>
+            <input type="password" placeholder="Password" name="password" id="password"/>
+            
+            <input type="submit" value="Log In" />
+        </form>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

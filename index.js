@@ -12,16 +12,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 /*  PASSPORT SETUP  */
 
 const passport = require('passport');
+app.use(require('cookie-parser')());
+app.use(require('express-session')({ secret: 'shuapp', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, cb) {
-  cb(null, user.id);
+    cb(null, user._id);
 });
 
 passport.deserializeUser(function(id, cb) {
-  User.findById(id, function(err, user) {
-    cb(err, user);
+  UserInfo.findOne({_id: id}, function(err, user) {
+      cb(err, user);
   });
 });
 
@@ -70,7 +72,8 @@ const LocalStrategy = require('passport-local').Strategy;
 passport.use(new LocalStrategy(
     function(username, password, done) {
         UserInfo.findOne({
-            username: username
+            username: username,
+            password: password
         }, function(err, user) {
             if (err) {
                 return done(err);
@@ -79,20 +82,34 @@ passport.use(new LocalStrategy(
             if (!user) {
                 return done(null, false);
             }
-
-            if (user.password != password) {
-                return done(null, false);
-            }
             
             return done(null, user);
         });
   }
 ));
 
-app.post('/',
-  passport.authenticate('local', { failureRedirect: '/error' }),
+function requireAuth(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+
+    res.redirect('/login?error');
+}
+
+app.get('/login', function(req, res) {
+    res.render('pages/login');
+});
+
+app.post('/login',
+  passport.authenticate('local', { failureRedirect: '/login?invalid' }),
   function(req, res) {
-    res.redirect('/success?username='+req.user.username);
+    res.redirect('/booking');
+});
+
+// bookings page
+app.get('/booking', requireAuth, function(req, res) {
+      res.send('Hello booking page!');
+      // TODO render booking page     
 });
 
 // index page 
@@ -107,9 +124,6 @@ app.get('/people', function(req, res) {
             people: people
         });
     });
-
-
-   
 });
 
 // location page 
