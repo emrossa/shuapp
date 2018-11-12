@@ -11,6 +11,23 @@ app.set('view engine', 'ejs');
 // index page 
 app.get('/', function(req, res) {
     res.render('pages/index');
+
+    // server.js
+
+// index page 
+app.get('/', function(req, res) {
+    var people = [
+        { name: 'Tom Adams', job: 3 },
+        { name: 'Chris Smith', job: 5 },
+        { name: 'Amy White', job: 3}
+    ];
+    var tagline = ".";
+
+    res.render('pages/index', {
+        people: people,
+        tagline: tagline
+    });
+});
 });
 
 // people page 
