@@ -14,16 +14,16 @@ app.get('/', function(req, res) {
 
     // server.js
 
-// index page 
-app.get('/', function(req, res) {
+// people page 
+app.get('/people', function(req, res) {
     var people = [
         { name: 'Tom Adams', job: 3 },
         { name: 'Chris Smith', job: 5 },
         { name: 'Amy White', job: 3}
     ];
-    var tagline = ".";
+    var tagline = "Our fabulous team!";
 
-    res.render('pages/index', {
+    res.render('pages/people', {
         people: people,
         tagline: tagline
     });
