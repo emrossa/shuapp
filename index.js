@@ -6,6 +6,10 @@ const app = express();
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
+// load validator
+app.use(require('express-validator')());
+
+// body parser
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -27,6 +31,13 @@ passport.deserializeUser(function(id, cb) {
   });
 });
 
+// flash messages
+app.use(require('connect-flash')());
+app.use(function (req, res, next) {
+    res.locals.success_message = req.flash('success_message');
+    next();
+});
+
 /* MONGOOSE SETUP */
 
 const mongoose = require('mongoose');
@@ -35,6 +46,7 @@ mongoose.connect('mongodb://localhost/MyDatabase');
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
     username: String,
+    email: String,
     password: String
 });
 const UserInfo = mongoose.model('userInfo', userSchema, 'userInfo');
@@ -151,6 +163,45 @@ app.get('/timings', function(req, res) {
         });
     });
 });
+
+app.get('/register', function(req, res) {
+    res.render('pages/register');
+});
+///////
+function createUser(newUser, callback) {
+    newUser.save(callback);
+}
+
+app.post('/register', function(req, res){
+    let username = req.body.username;
+    let email = req.body.email;
+    let password = req.body.password;
+    let cfm_pwd = req.body.cfm_pwd;
+  
+    req.checkBody('username', 'Username is required').notEmpty();
+    req.checkBody('email', 'Email is required').notEmpty();
+    req.checkBody('email', 'Please enter a valid email').isEmail();
+    req.checkBody('password', 'Password is required').notEmpty();
+    req.checkBody('cfm_pwd', 'Confirm Password is required').notEmpty();
+    req.checkBody('cfm_pwd', 'Confirm Password Must Matches With Password').equals(password);
+  
+    let errors = req.validationErrors();
+    if (errors) {
+        res.render('pages/register', {errors: errors});
+    } else {
+        let user = new UserInfo({
+            username: username,
+            email: email,
+            password: password
+        });
+        createUser(user, function(err, user) {
+            if (err) throw err;
+            else console.log(user);
+        });
+        req.flash('success_message','You have registered, Now please login');
+        res.redirect('login');
+    }
+  });
 
 const port = process.env.PORT || 3000;
 app.listen(port , () => console.log('App listening on port ' + port));

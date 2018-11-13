@@ -1,0 +1,54 @@
+<!-- views/pages/register.ejs -->
+
+<html>
+  <head>
+    <% include ../partials/head %>
+    <title>Register</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="container">
+      <% include ../partials/header %>
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Register The User
+        </div>
+        <%if (locals.errors) { %>
+            <div class="alert alert-danger">
+                <ul>
+                <% errors.forEach(function(error) { %>
+                    <li><%= error.msg %></li>
+                <% }); %>
+                </ul>
+            </div>
+        <% } %>
+        <div class="panel-body">
+          <form method="post" action="/register">
+            <div class="form-group">
+              <label class="col-md-4">Username</label>
+              <input type="text" class="form-control" name="username"/>
+            </div>
+            <div class="form-group">
+              <label class="col-md-4">Email</label>
+              <input type="text" class="form-control" name="email"/>
+              </div>
+              <div class="form-group">
+                <label class="col-md-4">Password</label>
+                <input type="password" class="form-control" name="password"/>
+              </div>
+              <div class="form-group">
+                <label class="col-md-4">Confirm Password</label>
+                <input type="password" class="form-control" name="cfm_pwd"/>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary">Add User</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+  </body>
+</html>

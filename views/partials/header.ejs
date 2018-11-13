@@ -15,11 +15,18 @@
                 <li><a href="/attractions">Attractions</a></li>
                 <li><a href="/locations">Locations</a></li>
                 <li><a href="/timings">Timings</a></li>
+                <li><a href="/register">Register</a></li>
                 <li><a href="/login">Log In</a></li>
 
                
             </ul>
         </div>
-    
-    </div>
+   
+    </div> 
     </nav>
+
+    <%if (locals.success_message != '') { %>
+        <div class="alert alert-success">
+         <%= success_message %>
+        </div>
+    <% } %>
