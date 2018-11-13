@@ -55,27 +55,28 @@ const UserInfo = mongoose.model('userInfo', userSchema, 'userInfo');
 
 const teamSchema = new Schema({
     membername: String,
-    memberjob: String
+    memberjob: String,
+    memberprice: Number
 });
 const TeamInfo = mongoose.model('teamInfo', teamSchema, 'teamInfo');
 
 
 const attractionSchema = new Schema({
     attractionname: String,
-    attractionprice: String
+    attractionprice: Number
 });
 const AttractionInfo = mongoose.model('attractionInfo', attractionSchema, 'attractionInfo');
 
 const locationSchema = new Schema({
     locationname: String,
-    locationprice: String
+    locationprice: Number
 });
 
 const LocationInfo = mongoose.model('locationInfo', locationSchema, 'locationInfo');
 
 const timingSchema = new Schema({
     hours: String,
-    timeprice: String
+    timeprice: Number
 });
 const TimingInfo = mongoose.model('timingInfo', timingSchema, 'timingInfo');
 

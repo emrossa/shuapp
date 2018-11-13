@@ -4,6 +4,21 @@
 <html lang="en">
 <head>
     <% include ../partials/head %>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(function () {
+            function updateTotal() {
+                let total = $('#booking').find(':checked').toArray() // find selected form elements
+                                .map(e => $(e).data('price'))        // get price attributes
+                                .reduce((tot, amt) => tot + amt);    // total them
+    
+                $('#total-price').text(total);
+            }
+
+            $('#booking').on('change', 'input,select', updateTotal);
+            updateTotal();
+        });
+    </script>
 </head>
 <body class="container">
 
@@ -13,41 +28,42 @@
 
 <main>
     <h1>New Booking</h1>
-    <form method="post">
+    <form id="booking" method="post">
+        <fieldset>
+            <legend>Staff</legend>
+            <% team.forEach(function(member) { %>
+                <label><input type="checkbox" data-price="<%= member.memberprice %>" value="<%= member._id %>" /> <%= member.membername %> - <%= member.memberjob %> - £<%= member.memberprice %></label><br />
+            <% }); %>       
+        </fieldset>
 
-            <fieldset>
-                    <legend>Staff</legend>
-                    <% team.forEach(function(member) { %>
-                        <label><input type="checkbox" data-price="<%= member.membername %>" value="<%= member._id %>" /> <%= member.membername %> - <%= member.memberjob %></label><br />
-                    <% }); %>       
-                </fieldset>
+        <fieldset>
+            <legend>Attractions</legend>
+            <% attractions.forEach(function(attraction) { %>
+                <label><input type="checkbox" data-price="<%= attraction.attractionprice %>" value="<%= attraction._id %>" /> <%= attraction.attractionname %> - £<%= attraction.attractionprice %></label><br />
+            <% }); %>       
+        </fieldset>
 
-                <fieldset>
-                        <legend>Attractions</legend>
-                        <% attractions.forEach(function(attraction) { %>
-                            <label><input type="checkbox" data-price="<%= attraction.attractionprice %>" value="<%= attraction._id %>" /> <%= attraction.attractionname %> - <%= attraction.attractionprice %></label><br />
-                        <% }); %>       
-                    </fieldset>
-
-                    <fieldset>
-                            <legend>Locations</legend>
-                            <select name="location">
-                            <% locations.forEach(function(place) { %>
-                                <option data-price="<%= place.locationprice %>" value="<%= place._id %>"><%= place.locationname %> - <%= place.locationprice %></option>
-                            <% }); %>
-                            </select>         
-                        </fieldset>
-
-            <fieldset>
-            <legend>Timing</legend>
-            <select name="timing">
-            <% timings.forEach(function(time) { %>
-                <option data-price="<%= time.timeprice %>" value="<%= time._id %>"><%= time.hours %> - <%= time.timeprice %></option>
+        <fieldset>
+            <legend>Locations</legend>
+            <select name="location">
+            <% locations.forEach(function(place) { %>
+                <option data-price="<%= place.locationprice %>" value="<%= place._id %>"><%= place.locationname %> - £<%= place.locationprice %></option>
             <% }); %>
             </select>         
         </fieldset>
 
+        <fieldset>
+            <legend>Timing</legend>
+            <select name="timing">
+            <% timings.forEach(function(time) { %>
+                <option data-price="<%= time.timeprice %>" value="<%= time._id %>"><%= time.hours %> - £<%= time.timeprice %></option>
+            <% }); %>
+            </select>         
+        </fieldset>
 
+        <p>Total: <strong>£<span id="total-price">0</span></strong></p>
+
+        <input type="submit" value="Book" />
     </form>
 </main>
 
