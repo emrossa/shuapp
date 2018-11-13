@@ -17,6 +17,13 @@
         <div class="jumbotron">
             <h2>Browse through our attractions</h2>
             <p>Select your desired ones to make your event special</p>
+
+            <ul>
+                <% attraction.forEach(function(entertainment) { %>
+                    <li><%= entertainment.attractionname %> - <%= entertainment.attractionprice %></li>
+                <% }); %>
+            </ul> 
+
         </div>
     </div>
 

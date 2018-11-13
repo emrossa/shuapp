@@ -17,6 +17,11 @@
         <div class="jumbotron">
             <h2>How long would you like for your event to run?</h2>
             <p>Choose one of our packages.</p>
+            <ul>
+                <% timing.forEach(function(time) { %>
+                    <li><%= time.hours %> - <%= time.timeprice %></li>
+                <% }); %>
+            </ul> 
         </div>
     </div>
 

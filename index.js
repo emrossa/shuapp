@@ -128,17 +128,28 @@ app.get('/people', function(req, res) {
 
 // location page 
 app.get('/locations', function(req, res) {
-    res.render('pages/locations');
+    LocationInfo.find({}, function(err, location){
+        res.render('pages/locations', {
+            location: location
+        });
+    });
 });
-
 // attractions page 
 app.get('/attractions', function(req, res) {
-    res.render('pages/attractions');
+    AttractionInfo.find({}, function(err, attraction){
+        res.render('pages/attractions', {
+            attraction: attraction
+        });
+    });
 });
 
 // timings page 
 app.get('/timings', function(req, res) {
-    res.render('pages/timings');
+    TimingInfo.find({}, function(err, timing){
+        res.render('pages/timings', {
+            timing: timing
+        });
+    });
 });
 
 const port = process.env.PORT || 3000;
