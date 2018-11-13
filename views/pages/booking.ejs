@@ -1,0 +1,59 @@
+<!-- views/pages/booking.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+    <h1>New Booking</h1>
+    <form method="post">
+
+            <fieldset>
+                    <legend>Staff</legend>
+                    <% team.forEach(function(member) { %>
+                        <label><input type="checkbox" data-price="<%= member.membername %>" value="<%= member._id %>" /> <%= member.membername %> - <%= member.memberjob %></label><br />
+                    <% }); %>       
+                </fieldset>
+
+                <fieldset>
+                        <legend>Attractions</legend>
+                        <% attractions.forEach(function(attraction) { %>
+                            <label><input type="checkbox" data-price="<%= attraction.attractionprice %>" value="<%= attraction._id %>" /> <%= attraction.attractionname %> - <%= attraction.attractionprice %></label><br />
+                        <% }); %>       
+                    </fieldset>
+
+                    <fieldset>
+                            <legend>Locations</legend>
+                            <select name="location">
+                            <% locations.forEach(function(place) { %>
+                                <option data-price="<%= place.locationprice %>" value="<%= place._id %>"><%= place.locationname %> - <%= place.locationprice %></option>
+                            <% }); %>
+                            </select>         
+                        </fieldset>
+
+            <fieldset>
+            <legend>Timing</legend>
+            <select name="timing">
+            <% timings.forEach(function(time) { %>
+                <option data-price="<%= time.timeprice %>" value="<%= time._id %>"><%= time.hours %> - <%= time.timeprice %></option>
+            <% }); %>
+            </select>         
+        </fieldset>
+
+
+    </form>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

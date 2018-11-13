@@ -13,6 +13,8 @@ app.use(require('express-validator')());
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const async = require('async');
+
 /*  PASSPORT SETUP  */
 
 const passport = require('passport');
@@ -120,8 +122,14 @@ app.post('/login',
 
 // bookings page
 app.get('/booking', requireAuth, function(req, res) {
-      res.send('Hello booking page!');
-      // TODO render booking page     
+    async.parallel({
+        team:        function(cb) { TeamInfo.find({}).exec(cb); },
+        locations:   function(cb) { LocationInfo.find({}).exec(cb); },
+        attractions: function(cb) { AttractionInfo.find({}).exec(cb); },
+        timings:     function(cb) { TimingInfo.find({}).exec(cb); }
+    }, function (err, result) {
+        res.render('pages/booking', result);
+    });
 });
 
 // index page 
