@@ -1,0 +1,30 @@
+<!-- views/pages/bookings.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h1>Your bookings</h1>
+        <ul>
+            <% bookings.forEach(function(booking) { %>
+                <li>Your booking made on <%= booking.bookedOn %></li>
+            <% }); %>
+        </ul> 
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

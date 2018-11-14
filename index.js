@@ -85,7 +85,8 @@ const bookingSchema = new Schema({
     attractions: [{type: Schema.Types.ObjectId, ref: 'attractionInfo'}],
     location: {type: Schema.Types.ObjectId, ref: 'locationInfo'},
     timing: {type: Schema.Types.ObjectId, ref: 'timingInfo'},
-    user: {type: Schema.Types.ObjectId, ref: 'userInfo'}
+    user: {type: Schema.Types.ObjectId, ref: 'userInfo'},
+    bookedOn: Date
 });
 
 const BookingInfo = mongoose.model('bookingInfo', bookingSchema, 'bookingInfo');
@@ -146,6 +147,7 @@ app.get('/booking', requireAuth, function(req, res) {
 app.post('/booking', requireAuth, function (req, res) {
     let booking = new BookingInfo(req.body);
     booking.user = req.user._id;
+    booking.bookedOn = Date.now();
     booking.save(function () {
         req.flash('success_message','Your booking has been created!');
         res.redirect('/booking');
@@ -191,7 +193,14 @@ app.get('/timings', function(req, res) {
         });
     });
 });
-
+// bookings page 
+app.get('/bookings', requireAuth, function(req, res) {
+    BookingInfo.find({user: req.user._id}, function (err, bookings) {
+        res.render('pages/bookings', {
+            bookings: bookings
+        });
+    });
+});
 app.get('/register', function(req, res) {
     res.render('pages/register');
 });
