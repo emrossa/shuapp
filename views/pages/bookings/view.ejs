@@ -1,0 +1,46 @@
+<!-- views/pages/bookings.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../../partials/header %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h1>Your booking</h1>
+        <p> Your booking made on <%= booking.bookedOn %></p>
+        <p>Your booking for the location is <%= location.locationname %></p>
+        <p>Your booking for the staff is 
+            <ul>
+                <% team.forEach(function(member) { %>
+                    <li><%= member.membername %> - <%= member.memberjob %></li>
+                <% }); %>
+            </ul> 
+        </p>
+        <p>Your booking for the timing is <%= timing.hours %></p>
+        <p><% if (attractions.length) { %>
+            Your booking for the attractions is 
+            <ul>
+                <% attractions.forEach(function(entertainment) { %>
+                    <li><%= entertainment.attractionname %> - <%= entertainment.attractionprice %></li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            You haven't booked any attractions
+        <% } %>
+        </p>
+    </div>
+</main>
+
+<footer>
+    <% include ../../partials/footer %>
+</footer>
+
+</body>
+</html>

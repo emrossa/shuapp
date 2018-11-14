@@ -28,7 +28,7 @@ passport.serializeUser(function(user, cb) {
 });
 
 passport.deserializeUser(function(id, cb) {
-  UserInfo.findOne({_id: id}, function(err, user) {
+  UserInfo.findById(id, function(err, user) {
       cb(err, user);
   });
 });
@@ -140,7 +140,7 @@ app.get('/booking', requireAuth, function(req, res) {
         attractions: function(cb) { AttractionInfo.find({}).exec(cb); },
         timings:     function(cb) { TimingInfo.find({}).exec(cb); }
     }, function (err, result) {
-        res.render('pages/booking', result);
+        res.render('pages/bookings/new', result);
     });
 });
 
@@ -196,11 +196,30 @@ app.get('/timings', function(req, res) {
 // bookings page 
 app.get('/bookings', requireAuth, function(req, res) {
     BookingInfo.find({user: req.user._id}, function (err, bookings) {
-        res.render('pages/bookings', {
+        res.render('pages/bookings/list', {
             bookings: bookings
         });
     });
 });
+
+app.get('/bookings/:id', requireAuth, function(req, res) {
+    BookingInfo.findOne({user: req.user._id, _id: req.params.id}, function (err, booking) {
+        if (booking) {
+            async.parallel({
+                team:        function(cb) { TeamInfo.find({_id: {$in: booking.team}}).exec(cb); },
+                location:    function(cb) { LocationInfo.findById(booking.location).exec(cb); },
+                attractions: function(cb) { AttractionInfo.find({_id: {$in: booking.attractions}}).exec(cb); },
+                timing:      function(cb) { TimingInfo.findById(booking.timing).exec(cb); }
+            }, function (err, result) {
+                result.booking = booking;
+                res.render('pages/bookings/view', result);
+            });
+        } else {
+            res.render('pages/bookings/notfound');
+        }
+    });
+});
+
 app.get('/register', function(req, res) {
     res.render('pages/register');
 });
