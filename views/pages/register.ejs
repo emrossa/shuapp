@@ -1,18 +1,19 @@
 <!-- views/pages/register.ejs -->
-
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <% include ../partials/head %>
-    <title>Register</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
-    <div class="container">
-      <% include ../partials/header %>
-      <div class="panel panel-primary">
-        <div class="panel-heading">
-          Register The User
-        </div>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h2>Register</h2>
+
         <%if (locals.errors) { %>
             <div class="alert alert-danger">
                 <ul>
@@ -22,6 +23,7 @@
                 </ul>
             </div>
         <% } %>
+
         <div class="panel-body">
           <form method="post">
             <div class="form-group">
@@ -45,10 +47,12 @@
               </div>
           </form>
         </div>
-      </div>
     </div>
-    <footer>
-        <% include ../partials/footer %>
-    </footer>
-  </body>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
 </html>

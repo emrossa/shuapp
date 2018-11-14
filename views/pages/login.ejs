@@ -13,7 +13,6 @@
 
 <main>
     <div class="jumbotron">
-        <h1>Magic Entertainment</h1>
         <h2>Log In</h2>
         <%if (error != '') { %>
             <div class="alert alert-danger">
@@ -21,13 +20,17 @@
             </div>
         <% } %>
         <form method="post">
-            <label>Username:</label>
-            <input type="text" placeholder="User name" name="username" id="username"/>
+            <div class="form-group">
+                <label class="col-md-4">Username</label>
+                <input type="text" class="form-control" placeholder="Username" name="username" id="username"/>
+            </div>
 
-            <label>Password:</label>
-            <input type="password" placeholder="Password" name="password" id="password"/>
+            <div class="form-group">
+                <label class="col-md-4">Password</label>
+                <input type="password" class="form-control" placeholder="Password" name="password" id="password"/>
+            </div>
             
-            <input type="submit" value="Log In" />
+            <input type="submit" class="btn btn-primary" value="Log In" />
         </form>
     </div>
 </main>
