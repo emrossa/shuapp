@@ -3,6 +3,8 @@
 const express = require('express');
 const app = express();
 
+const bcrypt = require('bcrypt');
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
@@ -97,19 +99,31 @@ const LocalStrategy = require('passport-local').Strategy;
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        UserInfo.findOne({
-            username: username,
-            password: password
-        }, function(err, user) {
+        // look up user by username
+        UserInfo.findOne({username: username}, function(err, user) {
             if (err) {
                 return done(err);
             }
 
+            // no user with that username
             if (!user) {
                 return done(null, false);
             }
-            
-            return done(null, user);
+
+            // compare password with hash
+            bcrypt.compare(password, user.password, function (err, isMatch) {
+                if (err) {
+                    return done(err);
+                }
+
+                // password is incorrect
+                if (!isMatch) {
+                    return done(null, false);
+                }
+
+                // success!
+                return done(null, user);
+            });
         });
   }
 ));
@@ -123,12 +137,15 @@ function requireAuth(req, res, next) {
 }
 
 app.get('/login', function(req, res) {
-    res.render('pages/login');
+    res.render('pages/login', {
+        error: req.flash('error')
+    });
 });
 
-app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/login?invalid' }),
-  function(req, res) {
+app.post('/login', passport.authenticate('local', {
+    failureRedirect: '/login',
+    failureFlash: 'Invalid username or password.'
+}), function(req, res) {
     res.redirect('/booking');
 });
 
@@ -250,7 +267,10 @@ app.get('/register', function(req, res) {
 });
 ///////
 function createUser(newUser, callback) {
-    newUser.save(callback);
+    bcrypt.hash(newUser.password, 10, function(err, hash) {
+        newUser.password = hash;
+        newUser.save(callback);
+    });
 }
 
 app.post('/register', function(req, res){
@@ -277,12 +297,12 @@ app.post('/register', function(req, res){
         });
         createUser(user, function(err, user) {
             if (err) throw err;
-            else console.log(user);
+
+            req.flash('success_message','You have registered, Now please login');
+            res.redirect('login');
         });
-        req.flash('success_message','You have registered, Now please login');
-        res.redirect('login');
     }
-  });
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('App listening on port ' + port));
