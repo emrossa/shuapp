@@ -140,11 +140,22 @@ app.get('/booking', requireAuth, function(req, res) {
         attractions: function(cb) { AttractionInfo.find({}).exec(cb); },
         timings:     function(cb) { TimingInfo.find({}).exec(cb); }
     }, function (err, result) {
+        result.booking_error = req.flash('booking_error'); // if we had any validation errors
         res.render('pages/bookings/new', result);
     });
 });
 
 app.post('/booking', requireAuth, function (req, res) {
+    req.checkBody('team', 'At least one staff member is required').notEmpty();
+
+    let errors = req.validationErrors();
+    if (errors) {
+        errors.forEach(function (error) {
+            req.flash('booking_error', error.msg);
+        });
+        return res.redirect('/booking');
+    }
+
     let booking = new BookingInfo(req.body);
     booking.user = req.user._id;
     booking.bookedOn = Date.now();

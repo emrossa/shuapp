@@ -19,13 +19,13 @@
 
             <ul>
                 <% people.forEach(function(member) { %>
-                    <li><%= member.membername %> - <%= member.memberjob %></li>
+                    <li><%= member.membername %> - <%= member.memberjob %> - £<%= member.memberprice %></li>
                 <% }); %>
             </ul> 
         </div>
     </div>
 
-    <div class="col-sm-4">        
+    <div class="col-sm-4">
         <div class="well">
             <h3>My Account</h3>
         </div>

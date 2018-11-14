@@ -28,6 +28,11 @@
 
 <main>
     <h1>New Booking</h1>
+    <%if (booking_error != '') { %>
+        <div class="alert alert-danger">
+            There were errors with your booking: <%= booking_error %>
+        </div>
+    <% } %>
     <form id="booking" method="post">
         <fieldset>
             <legend>Staff</legend>
