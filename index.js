@@ -5,6 +5,14 @@ const app = express();
 
 const bcrypt = require('bcrypt');
 
+// models
+const AttractionInfo = require('./models/attraction');
+const BookingInfo = require('./models/booking');
+const LocationInfo = require('./models/location');
+const TeamInfo = require('./models/team');
+const TimingInfo = require('./models/timing');
+const UserInfo = require('./models/user');
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
@@ -46,52 +54,6 @@ app.use(function (req, res, next) {
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/MyDatabase');
-
-const Schema = mongoose.Schema;
-const userSchema = new Schema({
-    username: String,
-    email: String,
-    password: String
-});
-const UserInfo = mongoose.model('userInfo', userSchema, 'userInfo');
-
-const teamSchema = new Schema({
-    membername: String,
-    memberjob: String,
-    memberprice: Number
-});
-const TeamInfo = mongoose.model('teamInfo', teamSchema, 'teamInfo');
-
-
-const attractionSchema = new Schema({
-    attractionname: String,
-    attractionprice: Number
-});
-const AttractionInfo = mongoose.model('attractionInfo', attractionSchema, 'attractionInfo');
-
-const locationSchema = new Schema({
-    locationname: String,
-    locationprice: Number
-});
-
-const LocationInfo = mongoose.model('locationInfo', locationSchema, 'locationInfo');
-
-const timingSchema = new Schema({
-    hours: String,
-    timeprice: Number
-});
-const TimingInfo = mongoose.model('timingInfo', timingSchema, 'timingInfo');
-
-const bookingSchema = new Schema({
-    team: [{type: Schema.Types.ObjectId, ref: 'teamInfo'}],
-    attractions: [{type: Schema.Types.ObjectId, ref: 'attractionInfo'}],
-    location: {type: Schema.Types.ObjectId, ref: 'locationInfo'},
-    timing: {type: Schema.Types.ObjectId, ref: 'timingInfo'},
-    user: {type: Schema.Types.ObjectId, ref: 'userInfo'},
-    bookedOn: Date
-});
-
-const BookingInfo = mongoose.model('bookingInfo', bookingSchema, 'bookingInfo');
 
 /* PASSPORT LOCAL AUTHENTICATION */
 
@@ -265,13 +227,6 @@ app.get('/bookings/:id/delete', requireAuth, function(req, res) {
 app.get('/register', function(req, res) {
     res.render('pages/register');
 });
-///////
-function createUser(newUser, callback) {
-    bcrypt.hash(newUser.password, 10, function(err, hash) {
-        newUser.password = hash;
-        newUser.save(callback);
-    });
-}
 
 app.post('/register', function(req, res){
     let username = req.body.username;
@@ -295,7 +250,7 @@ app.post('/register', function(req, res){
             email: email,
             password: password
         });
-        createUser(user, function(err, user) {
+        UserInfo.createUser(user, function(err, user) {
             if (err) throw err;
 
             req.flash('success_message','You have registered, Now please login');
