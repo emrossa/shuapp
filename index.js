@@ -80,6 +80,15 @@ const timingSchema = new Schema({
 });
 const TimingInfo = mongoose.model('timingInfo', timingSchema, 'timingInfo');
 
+const bookingSchema = new Schema({
+    team: [{type: Schema.Types.ObjectId, ref: 'teamInfo'}],
+    attractions: [{type: Schema.Types.ObjectId, ref: 'attractionInfo'}],
+    location: {type: Schema.Types.ObjectId, ref: 'locationInfo'},
+    timing: {type: Schema.Types.ObjectId, ref: 'timingInfo'}
+});
+
+const BookingInfo = mongoose.model('bookingInfo', bookingSchema, 'bookingInfo');
+
 /* PASSPORT LOCAL AUTHENTICATION */
 
 const LocalStrategy = require('passport-local').Strategy;
@@ -130,6 +139,14 @@ app.get('/booking', requireAuth, function(req, res) {
         timings:     function(cb) { TimingInfo.find({}).exec(cb); }
     }, function (err, result) {
         res.render('pages/booking', result);
+    });
+});
+
+app.post('/booking', requireAuth, function (req, res) {
+    let booking = new BookingInfo(req.body);
+    booking.save(function () {
+        req.flash('success_message','Your booking has been created!');
+        res.redirect('/booking');
     });
 });
 
@@ -213,4 +230,4 @@ app.post('/register', function(req, res){
   });
 
 const port = process.env.PORT || 3000;
-app.listen(port , () => console.log('App listening on port ' + port));
+app.listen(port, () => console.log('App listening on port ' + port));

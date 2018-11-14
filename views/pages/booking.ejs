@@ -32,14 +32,14 @@
         <fieldset>
             <legend>Staff</legend>
             <% team.forEach(function(member) { %>
-                <label><input type="checkbox" data-price="<%= member.memberprice %>" value="<%= member._id %>" /> <%= member.membername %> - <%= member.memberjob %> - £<%= member.memberprice %></label><br />
+                <label><input type="checkbox" data-price="<%= member.memberprice %>" name="team" value="<%= member._id %>" /> <%= member.membername %> - <%= member.memberjob %> - £<%= member.memberprice %></label><br />
             <% }); %>       
         </fieldset>
 
         <fieldset>
             <legend>Attractions</legend>
             <% attractions.forEach(function(attraction) { %>
-                <label><input type="checkbox" data-price="<%= attraction.attractionprice %>" value="<%= attraction._id %>" /> <%= attraction.attractionname %> - £<%= attraction.attractionprice %></label><br />
+                <label><input type="checkbox" data-price="<%= attraction.attractionprice %>" name="attractions" value="<%= attraction._id %>" /> <%= attraction.attractionname %> - £<%= attraction.attractionprice %></label><br />
             <% }); %>       
         </fieldset>
 
