@@ -84,7 +84,8 @@ const bookingSchema = new Schema({
     team: [{type: Schema.Types.ObjectId, ref: 'teamInfo'}],
     attractions: [{type: Schema.Types.ObjectId, ref: 'attractionInfo'}],
     location: {type: Schema.Types.ObjectId, ref: 'locationInfo'},
-    timing: {type: Schema.Types.ObjectId, ref: 'timingInfo'}
+    timing: {type: Schema.Types.ObjectId, ref: 'timingInfo'},
+    user: {type: Schema.Types.ObjectId, ref: 'userInfo'}
 });
 
 const BookingInfo = mongoose.model('bookingInfo', bookingSchema, 'bookingInfo');
@@ -144,6 +145,7 @@ app.get('/booking', requireAuth, function(req, res) {
 
 app.post('/booking', requireAuth, function (req, res) {
     let booking = new BookingInfo(req.body);
+    booking.user = req.user._id;
     booking.save(function () {
         req.flash('success_message','Your booking has been created!');
         res.redirect('/booking');
