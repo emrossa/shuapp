@@ -2,17 +2,13 @@
 
 const express = require('express');
 const app = express();
-
 const bcrypt = require('bcrypt');
 
 // models
-const AttractionInfo = require('./models/attraction');
-const LocationInfo = require('./models/location');
-const TeamInfo = require('./models/team');
-const TimingInfo = require('./models/timing');
 const UserInfo = require('./models/user');
 
 // routers
+const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const bookingsRouter = require('./routes/bookings');
 
@@ -27,7 +23,6 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 /*  PASSPORT SETUP  */
-
 const passport = require('passport');
 app.use(require('cookie-parser')());
 app.use(require('express-session')({ secret: 'shuapp', resave: false, saveUninitialized: false }));
@@ -39,9 +34,9 @@ passport.serializeUser(function(user, cb) {
 });
 
 passport.deserializeUser(function(id, cb) {
-  UserInfo.findById(id, function(err, user) {
-      cb(err, user);
-  });
+    UserInfo.findById(id, function(err, user) {
+        cb(err, user);
+    });
 });
 
 // flash messages
@@ -52,12 +47,10 @@ app.use(function (req, res, next) {
 });
 
 /* MONGOOSE SETUP */
-
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/MyDatabase');
 
 /* PASSPORT LOCAL AUTHENTICATION */
-
 const LocalStrategy = require('passport-local').Strategy;
 
 passport.use(new LocalStrategy(
@@ -91,6 +84,7 @@ passport.use(new LocalStrategy(
   }
 ));
 
+// require authentication for certain routes
 function requireAuth(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
@@ -99,48 +93,11 @@ function requireAuth(req, res, next) {
     res.redirect('/auth/login?error');
 }
 
-// index page 
-app.get('/', function(req, res) {
-    res.render('pages/index');
-});
-
-// people page 
-app.get('/people', function(req, res) {
-    TeamInfo.find({}, function(err, people) {
-        res.render('pages/people', {
-            people: people
-        });
-    });
-});
-
-// location page 
-app.get('/locations', function(req, res) {
-    LocationInfo.find({}, function(err, location){
-        res.render('pages/locations', {
-            location: location
-        });
-    });
-});
-// attractions page 
-app.get('/attractions', function(req, res) {
-    AttractionInfo.find({}, function(err, attraction){
-        res.render('pages/attractions', {
-            attraction: attraction
-        });
-    });
-});
-
-// timings page 
-app.get('/timings', function(req, res) {
-    TimingInfo.find({}, function(err, timing){
-        res.render('pages/timings', {
-            timing: timing
-        });
-    });
-});
-
+// use routers
+app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/bookings', requireAuth, bookingsRouter);
 
+// start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('App listening on port ' + port));
