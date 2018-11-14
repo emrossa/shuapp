@@ -15,20 +15,21 @@
                 <li><a href="/attractions">Attractions</a></li>
                 <li><a href="/locations">Locations</a></li>
                 <li><a href="/timings">Timings</a></li>
-                <li><a href="/auth/register">Register</a></li>
-                <li><a href="/auth/login">Log In</a></li>
+                <% if (logged_in) { %>
                 <li><a href="/bookings/new">Booking</a></li>
                 <li><a href="/bookings">Your Bookings</a></li>
-
-
-               
+                <li><a href="/auth/logout">Log Out</a></li>
+                <% } else { %>
+                <li><a href="/auth/register">Register</a></li>
+                <li><a href="/auth/login">Log In</a></li>
+                <% } %>
             </ul>
         </div>
    
     </div> 
     </nav>
 
-    <%if (locals.success_message != '') { %>
+    <% if (locals.success_message != '') { %>
         <div class="alert alert-success">
          <%= success_message %>
         </div>

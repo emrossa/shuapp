@@ -43,6 +43,7 @@ passport.deserializeUser(function(id, cb) {
 app.use(require('connect-flash')());
 app.use(function (req, res, next) {
     res.locals.success_message = req.flash('success_message');
+    res.locals.logged_in = req.isAuthenticated();
     next();
 });
 

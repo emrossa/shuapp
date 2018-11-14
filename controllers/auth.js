@@ -12,6 +12,15 @@ module.exports.login = function (req, res) {
     res.redirect('/bookings/new');
 };
 
+// log out from the site
+module.exports.logout = function (req, res) {
+    req.logout();
+    res.clearCookie('connect.sid', {path: '/'});
+    req.session.destroy(function () {
+        res.redirect('/');
+    });
+};
+
 // registration form
 module.exports.registerForm = function(req, res) {
     res.render('pages/register');
