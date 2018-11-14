@@ -13,6 +13,9 @@ const TeamInfo = require('./models/team');
 const TimingInfo = require('./models/timing');
 const UserInfo = require('./models/user');
 
+// routers
+const bookingsRouter = require('./routes/bookings');
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
@@ -22,8 +25,6 @@ app.use(require('express-validator')());
 // body parser
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
-
-const async = require('async');
 
 /*  PASSPORT SETUP  */
 
@@ -108,40 +109,42 @@ app.post('/login', passport.authenticate('local', {
     failureRedirect: '/login',
     failureFlash: 'Invalid username or password.'
 }), function(req, res) {
-    res.redirect('/booking');
+    res.redirect('/bookings/new');
 });
 
-// bookings page
-app.get('/booking', requireAuth, function(req, res) {
-    async.parallel({
-        team:        function(cb) { TeamInfo.find({}).exec(cb); },
-        locations:   function(cb) { LocationInfo.find({}).exec(cb); },
-        attractions: function(cb) { AttractionInfo.find({}).exec(cb); },
-        timings:     function(cb) { TimingInfo.find({}).exec(cb); }
-    }, function (err, result) {
-        result.booking_error = req.flash('booking_error'); // if we had any validation errors
-        res.render('pages/bookings/new', result);
-    });
+app.get('/register', function(req, res) {
+    res.render('pages/register');
 });
 
-app.post('/booking', requireAuth, function (req, res) {
-    req.checkBody('team', 'At least one staff member is required').notEmpty();
-
+app.post('/register', function(req, res){
+    let username = req.body.username;
+    let email = req.body.email;
+    let password = req.body.password;
+    let cfm_pwd = req.body.cfm_pwd;
+  
+    req.checkBody('username', 'Username is required').notEmpty();
+    req.checkBody('email', 'Email is required').notEmpty();
+    req.checkBody('email', 'Please enter a valid email').isEmail();
+    req.checkBody('password', 'Password is required').notEmpty();
+    req.checkBody('cfm_pwd', 'Confirm Password is required').notEmpty();
+    req.checkBody('cfm_pwd', 'Confirm Password Must Matches With Password').equals(password);
+  
     let errors = req.validationErrors();
     if (errors) {
-        errors.forEach(function (error) {
-            req.flash('booking_error', error.msg);
+        res.render('pages/register', {errors: errors});
+    } else {
+        let user = new UserInfo({
+            username: username,
+            email: email,
+            password: password
         });
-        return res.redirect('/booking');
-    }
+        UserInfo.createUser(user, function(err, user) {
+            if (err) throw err;
 
-    let booking = new BookingInfo(req.body);
-    booking.user = req.user._id;
-    booking.bookedOn = Date.now();
-    booking.save(function () {
-        req.flash('success_message','Your booking has been created!');
-        res.redirect('/booking');
-    });
+            req.flash('success_message','You have registered, Now please login');
+            res.redirect('login');
+        });
+    }
 });
 
 // index page 
@@ -183,81 +186,8 @@ app.get('/timings', function(req, res) {
         });
     });
 });
-// bookings page 
-app.get('/bookings', requireAuth, function(req, res) {
-    BookingInfo.find({user: req.user._id}, function (err, bookings) {
-        res.render('pages/bookings/list', {
-            bookings: bookings
-        });
-    });
-});
 
-app.get('/bookings/:id', requireAuth, function(req, res) {
-    BookingInfo.findOne({user: req.user._id, _id: req.params.id}, function (err, booking) {
-        if (booking) {
-            async.parallel({
-                team:        function(cb) { TeamInfo.find({_id: {$in: booking.team}}).exec(cb); },
-                location:    function(cb) { LocationInfo.findById(booking.location).exec(cb); },
-                attractions: function(cb) { AttractionInfo.find({_id: {$in: booking.attractions}}).exec(cb); },
-                timing:      function(cb) { TimingInfo.findById(booking.timing).exec(cb); }
-            }, function (err, result) {
-                result.booking = booking;
-                res.render('pages/bookings/view', result);
-            });
-        } else {
-            res.render('pages/bookings/notfound');
-        }
-    });
-});
-//booking deletion
-
-app.get('/bookings/:id/delete', requireAuth, function(req, res) {
-    BookingInfo.findOne({user: req.user._id, _id: req.params.id}, function (err, booking) {
-        if (booking) {
-            booking.remove(function (err) {
-                req.flash('success_message','Your booking has been deleted');
-                res.redirect('/bookings');
-            });
-        } else {
-            res.render('pages/bookings/notfound');
-        }
-    });
-});
-
-app.get('/register', function(req, res) {
-    res.render('pages/register');
-});
-
-app.post('/register', function(req, res){
-    let username = req.body.username;
-    let email = req.body.email;
-    let password = req.body.password;
-    let cfm_pwd = req.body.cfm_pwd;
-  
-    req.checkBody('username', 'Username is required').notEmpty();
-    req.checkBody('email', 'Email is required').notEmpty();
-    req.checkBody('email', 'Please enter a valid email').isEmail();
-    req.checkBody('password', 'Password is required').notEmpty();
-    req.checkBody('cfm_pwd', 'Confirm Password is required').notEmpty();
-    req.checkBody('cfm_pwd', 'Confirm Password Must Matches With Password').equals(password);
-  
-    let errors = req.validationErrors();
-    if (errors) {
-        res.render('pages/register', {errors: errors});
-    } else {
-        let user = new UserInfo({
-            username: username,
-            email: email,
-            password: password
-        });
-        UserInfo.createUser(user, function(err, user) {
-            if (err) throw err;
-
-            req.flash('success_message','You have registered, Now please login');
-            res.redirect('login');
-        });
-    }
-});
+app.use('/bookings', requireAuth, bookingsRouter);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('App listening on port ' + port));
