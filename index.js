@@ -7,13 +7,13 @@ const bcrypt = require('bcrypt');
 
 // models
 const AttractionInfo = require('./models/attraction');
-const BookingInfo = require('./models/booking');
 const LocationInfo = require('./models/location');
 const TeamInfo = require('./models/team');
 const TimingInfo = require('./models/timing');
 const UserInfo = require('./models/user');
 
 // routers
+const authRouter = require('./routes/auth');
 const bookingsRouter = require('./routes/bookings');
 
 // set the view engine to ejs
@@ -96,56 +96,8 @@ function requireAuth(req, res, next) {
         return next();
     }
 
-    res.redirect('/login?error');
+    res.redirect('/auth/login?error');
 }
-
-app.get('/login', function(req, res) {
-    res.render('pages/login', {
-        error: req.flash('error')
-    });
-});
-
-app.post('/login', passport.authenticate('local', {
-    failureRedirect: '/login',
-    failureFlash: 'Invalid username or password.'
-}), function(req, res) {
-    res.redirect('/bookings/new');
-});
-
-app.get('/register', function(req, res) {
-    res.render('pages/register');
-});
-
-app.post('/register', function(req, res){
-    let username = req.body.username;
-    let email = req.body.email;
-    let password = req.body.password;
-    let cfm_pwd = req.body.cfm_pwd;
-  
-    req.checkBody('username', 'Username is required').notEmpty();
-    req.checkBody('email', 'Email is required').notEmpty();
-    req.checkBody('email', 'Please enter a valid email').isEmail();
-    req.checkBody('password', 'Password is required').notEmpty();
-    req.checkBody('cfm_pwd', 'Confirm Password is required').notEmpty();
-    req.checkBody('cfm_pwd', 'Confirm Password Must Matches With Password').equals(password);
-  
-    let errors = req.validationErrors();
-    if (errors) {
-        res.render('pages/register', {errors: errors});
-    } else {
-        let user = new UserInfo({
-            username: username,
-            email: email,
-            password: password
-        });
-        UserInfo.createUser(user, function(err, user) {
-            if (err) throw err;
-
-            req.flash('success_message','You have registered, Now please login');
-            res.redirect('login');
-        });
-    }
-});
 
 // index page 
 app.get('/', function(req, res) {
@@ -187,6 +139,7 @@ app.get('/timings', function(req, res) {
     });
 });
 
+app.use('/auth', authRouter);
 app.use('/bookings', requireAuth, bookingsRouter);
 
 const port = process.env.PORT || 3000;
