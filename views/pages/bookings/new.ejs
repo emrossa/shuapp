@@ -30,10 +30,20 @@
     <h1>New Booking</h1>
     <%if (booking_error != '') { %>
         <div class="alert alert-danger">
-            There were errors with your booking: <%= booking_error %>
+            There were errors with your booking:
+            <ul>
+                <% booking_error.forEach(function (error) { %>
+                    <li><%= error %></li>
+                <% }) %>
+            </ul>
         </div>
     <% } %>
     <form id="booking" method="post">
+        <fieldset>
+            <legend>Date</legend>
+            <input type="date" name="bookedFor" />    
+        </fieldset>
+                        
         <fieldset>
             <legend>Staff</legend>
             <% team.forEach(function(member) { %>

@@ -16,7 +16,7 @@
         <h1>Your bookings</h1>
         <ul>
             <% bookings.forEach(function(booking) { %>
-                <li><a href="/bookings/<%= booking._id %>">Your booking made on <%= booking.bookedOn %></a></li>
+                <li><a href="/bookings/<%= booking._id %>">Your booking made for <%= booking.bookedFor %></a></li>
             <% }); %>
         </ul> 
     </div>

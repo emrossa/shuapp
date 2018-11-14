@@ -22,6 +22,10 @@ module.exports.new = function(req, res) {
 // save the new booking in the database
 module.exports.create = function (req, res) {
     req.checkBody('team', 'At least one staff member is required').notEmpty();
+    req.checkBody('bookedFor', 'Must book for a valid date').notEmpty();
+    req.checkBody('bookedFor', 'Must book for a date in the future').toDate().custom(function (date) {
+        return (date && date > new Date());
+    });
 
     let errors = req.validationErrors();
     if (errors) {
