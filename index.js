@@ -230,6 +230,20 @@ app.get('/bookings/:id', requireAuth, function(req, res) {
         }
     });
 });
+//booking deletion
+
+app.get('/bookings/:id/delete', requireAuth, function(req, res) {
+    BookingInfo.findOne({user: req.user._id, _id: req.params.id}, function (err, booking) {
+        if (booking) {
+            booking.remove(function (err) {
+                req.flash('success_message','Your booking has been deleted');
+                res.redirect('/bookings');
+            });
+        } else {
+            res.render('pages/bookings/notfound');
+        }
+    });
+});
 
 app.get('/register', function(req, res) {
     res.render('pages/register');
