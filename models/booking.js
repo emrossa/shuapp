@@ -8,7 +8,8 @@ const bookingSchema = new mongoose.Schema({
     timing:      {type: ObjectId, ref: 'timingInfo'},
     user:        {type: ObjectId, ref: 'userInfo'},
     bookedOn:    Date,
-    bookedFor:   Date
+    bookedFor:   Date,
+    totalPrice:  Number
 });
 
 module.exports = mongoose.model('bookingInfo', bookingSchema, 'bookingInfo');

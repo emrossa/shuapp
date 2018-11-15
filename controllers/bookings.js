@@ -6,15 +6,26 @@ const AttractionInfo = require('../models/attraction');
 const TimingInfo = require('../models/timing');
 const BookingInfo = require('../models/booking');
 
+function getBookingInfo(booking, callback) {
+    // look up other info about the booking
+    async.parallel({
+        team:        function(cb) { TeamInfo.find({_id: {$in: booking.team}}).exec(cb); },
+        location:    function(cb) { LocationInfo.findById(booking.location).exec(cb); },
+        attractions: function(cb) { AttractionInfo.find({_id: {$in: booking.attractions}}).exec(cb); },
+        timing:      function(cb) { TimingInfo.findById(booking.timing).exec(cb); }
+    }, callback);   
+}
+
 // form to create new booking
 module.exports.new = function(req, res) {
+    // look up all the available info for a booking
     async.parallel({
         team:        function(cb) { TeamInfo.find({}).exec(cb); },
         locations:   function(cb) { LocationInfo.find({}).exec(cb); },
         attractions: function(cb) { AttractionInfo.find({}).exec(cb); },
         timings:     function(cb) { TimingInfo.find({}).exec(cb); }
     }, function (err, result) {
-        result.booking_error = req.flash('booking_error'); // if we had any validation errors
+        result.booking_error = req.flash('booking_error'); // if we had any validation errors from create
         res.render('pages/bookings/new', result);
     });
 };
@@ -40,12 +51,27 @@ module.exports.create = function (req, res) {
             return res.redirect('/bookings/new');
         }
     
-        let booking = new BookingInfo(req.body);
-        booking.user = req.user._id;
-        booking.bookedOn = Date.now();
-        booking.save(function () {
-            req.flash('success_message','Your booking has been created!');
-            res.redirect('/bookings/new');
+        // get other info to work out cost
+        getBookingInfo(req.body, function (err, info) {
+            let cost = info.location.locationprice + info.timing.timeprice;
+
+            info.team.forEach(function (member) {
+                cost += member.memberprice;
+            });
+
+            info.attractions.forEach(function (attraction) {
+                cost += attraction.attractionprice;
+            });
+
+            // create the booking
+            let booking = new BookingInfo(req.body);
+            booking.user = req.user._id;
+            booking.bookedOn = Date.now();
+            booking.totalPrice = cost;
+            booking.save(function () {
+                req.flash('success_message','Your booking has been created!');
+                res.redirect('/bookings/new');
+            });
         });
     });
 };
@@ -63,12 +89,7 @@ module.exports.index = function(req, res) {
 module.exports.show = function(req, res) {
     BookingInfo.findOne({user: req.user._id, _id: req.params.id}, function (err, booking) {
         if (booking) {
-            async.parallel({
-                team:        function(cb) { TeamInfo.find({_id: {$in: booking.team}}).exec(cb); },
-                location:    function(cb) { LocationInfo.findById(booking.location).exec(cb); },
-                attractions: function(cb) { AttractionInfo.find({_id: {$in: booking.attractions}}).exec(cb); },
-                timing:      function(cb) { TimingInfo.findById(booking.timing).exec(cb); }
-            }, function (err, result) {
+            getBookingInfo(booking, function (err, result) {
                 result.booking = booking;
                 res.render('pages/bookings/view', result);
             });
@@ -83,6 +104,7 @@ module.exports.show = function(req, res) {
 module.exports.delete = function(req, res) {
     BookingInfo.findOne({user: req.user._id, _id: req.params.id}, function (err, booking) {
         if (booking) {
+            // delete the booking if it exists
             booking.remove(function (err) {
                 req.flash('success_message','Your booking has been deleted');
                 res.redirect('/bookings');
