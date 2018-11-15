@@ -21,26 +21,32 @@ module.exports.new = function(req, res) {
 
 // save the new booking in the database
 module.exports.create = function (req, res) {
-    req.checkBody('team', 'At least one staff member is required').notEmpty();
-    req.checkBody('bookedFor', 'Must book for a valid date').notEmpty();
-    req.checkBody('bookedFor', 'Must book for a date in the future').toDate().custom(function (date) {
-        return (date && date > new Date());
-    });
-
-    let errors = req.validationErrors();
-    if (errors) {
-        errors.forEach(function (error) {
-            req.flash('booking_error', error.msg);
+    // check for other bookings on the same date (for any user)
+    BookingInfo.findOne({bookedFor: new Date(req.body.bookedFor)}, function (err, existingBooking) {
+        req.checkBody('team', 'At least one staff member is required').notEmpty();
+        req.checkBody('bookedFor', 'Must book for a valid date').notEmpty();
+        req.checkBody('bookedFor', 'Must book for a date in the future').toDate().custom(function (date) {
+            return (date && date > new Date());
         });
-        return res.redirect('/bookings/new');
-    }
-
-    let booking = new BookingInfo(req.body);
-    booking.user = req.user._id;
-    booking.bookedOn = Date.now();
-    booking.save(function () {
-        req.flash('success_message','Your booking has been created!');
-        res.redirect('/bookings/new');
+        req.checkBody('bookedFor', 'This date has already been booked').custom(function (date) {
+            return !existingBooking; // fail validation if booking already exists
+        });
+    
+        let errors = req.validationErrors();
+        if (errors) {
+            errors.forEach(function (error) {
+                req.flash('booking_error', error.msg);
+            });
+            return res.redirect('/bookings/new');
+        }
+    
+        let booking = new BookingInfo(req.body);
+        booking.user = req.user._id;
+        booking.bookedOn = Date.now();
+        booking.save(function () {
+            req.flash('success_message','Your booking has been created!');
+            res.redirect('/bookings/new');
+        });
     });
 };
 
