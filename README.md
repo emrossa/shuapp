@@ -20,6 +20,8 @@ All visitors can view each page describing the choices available in a booking. I
 
 Bookings can be viewed on 'Your Bookings' page. There are links to each booking made that will take the user to the booking details, where a user can delete a specific booking. 'Booking' and 'Your booking' pages can only be viewed by a logged in user, and only the user that made a booking can view it.
 
+When logged in, a user can view their account from the My Account page, and can also delete their account.
+
 ## Troubleshooting
 
 The application uses bcrypt to encrypt the user passwords. There is an [issue with installing bcrypt on certain versions of Node.js](https://github.com/kelektiv/node.bcrypt.js/issues/648), which may stop the application from installing. It is suggested to use Node.js version 9+ to stop this.

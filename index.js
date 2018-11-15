@@ -11,6 +11,7 @@ const UserInfo = require('./models/user');
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const bookingsRouter = require('./routes/bookings');
+const accountRouter = require('./routes/account');
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -98,6 +99,7 @@ function requireAuth(req, res, next) {
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/bookings', requireAuth, bookingsRouter);
+app.use('/account', requireAuth, accountRouter);
 
 // start server
 const port = process.env.PORT || 3000;

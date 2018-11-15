@@ -1,0 +1,28 @@
+<!-- views/pages/account.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h2>My Account</h2>
+        <p>Your username is: <%= user.username %></p>
+        <p>Your email address is: <%= user.email %></p>
+        <p><a class="btn btn-danger" href="/account/delete">Delete this account</a></p>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>
